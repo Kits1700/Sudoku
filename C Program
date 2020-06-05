@@ -1,0 +1,94 @@
+#include <stdio.h> 
+#define EMPTY 0 
+#define N 9 
+bool getEmpty(int mat[N][N], int& row, int& col); //Function to get empty location
+bool Safe(int mat[N][N], int row,int col, int num);//Function to see if it follows rules 
+bool Solve(int mat[N][N]) 
+{ 
+    int row, col; 
+    if (!getEmpty(mat, row, col)) //Checks for emoty position
+        return true;
+    for (int num = 1; num <= 9; num++) { 
+        // if looks promising 
+        if (Safe(mat, row, col, num)) { 
+            mat[row][col] = num;//This is not a final assignment, just temporary. 
+        if (SolveSudoku(mat))//Its a recursive call until all the positions follow the rules of sudoku.
+               return true; 
+
+           
+            mat[row][col] = EMPTY; 
+        } 
+    } 
+
+    return false; //If no match ,the given matrix is false
+} 
+bool getEmpty(int mat[N][N], int& row, int& col) //Checks if empty
+{ 
+    for (row = 0; row < N; row++) 
+        for (col = 0; col < N; col++) 
+            if (mat[row][col] == EMPTY) 
+                return true; 
+    return false; 
+} 
+bool ExistsInROw(int mat[N][N], int row, int num)//Checks if the number already exists in a given row.
+{ 
+    for (int col = 0; col < N; col++) 
+        if (mat[row][col] == num) 
+            return true; 
+    return false; 
+} 
+  
+bool ExistsInCol(int mat[N][N], int col, int num) //Checks if the number already exists in a given col.
+{ 
+    for (int row = 0; row < N; row++) 
+        if (mat[row][col] == num) 
+            return true; 
+    return false; 
+} 
+  
+bool InBox(int mat[N][N], int StartRow,int StartCol, int num) 
+{ 
+    for (int row = 0; row < 3; row++) 
+        for (int col = 0; col < 3; col++) 
+            if ( 
+                mat[row + StartRow][col + StartCol]== num) 
+                return true; 
+    return false; 
+} 
+bool Safe(int mat[N][N], int row,int col, int num) //Checks if all the 3 rules are followed
+{ 
+      return !ExistsInRow(mat, row, num) 
+           && !ExistsInCol(mat, col, num) 
+           && !InBox(mat, row - row % 3,col - col % 3, num) 
+           && mat[row][col] == EMPTY; 
+} 
+
+void print(int mat[N][N]) 
+{ 
+    for (int row = 0; row < N; row++) { 
+        for (int col = 0; col < N; col++) 
+            printf("%2d", mat[row][col]); 
+        printf("\n"); 
+    } 
+} 
+  
+
+int main() 
+{ 
+
+    int mat[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 }, 
+                       { 5, 2, 0, 0, 0, 0, 0, 0, 0 }, 
+                       { 0, 8, 7, 0, 0, 0, 0, 3, 1 }, 
+                       { 0, 0, 3, 0, 1, 0, 0, 8, 0 }, 
+                       { 9, 0, 0, 8, 6, 3, 0, 0, 5 }, 
+                       { 0, 5, 0, 0, 9, 0, 6, 0, 0 }, 
+                       { 1, 3, 0, 0, 0, 0, 2, 5, 0 }, 
+                       { 0, 0, 0, 0, 0, 0, 0, 7, 4 }, 
+                       { 0, 0, 5, 2, 0, 6, 3, 0, 0 } }; 
+    if (Solve(mat) == true) 
+        print(mat); 
+    else
+        printf("No solution exists"); 
+  
+    return 0; 
+} 
